@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Project = {
   title: string;
@@ -27,6 +27,83 @@ const filters = ["All", "Trim & Details", "Cabinetry", "Custom Woodwork"] as con
 const phoneDisplay = "(706) 496-5687";
 const phoneLink = "+17064965687";
 const email = "jasonandco.jason@gmail.com";
+
+function ScrollCraftFilm() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const progressRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const video = videoRef.current;
+    const progress = progressRef.current;
+    if (!section || !video || !progress) return;
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let frame = 0;
+
+    const update = () => {
+      frame = 0;
+      const rect = section.getBoundingClientRect();
+      const travel = Math.max(1, section.offsetHeight - window.innerHeight);
+      const amount = Math.min(1, Math.max(0, -rect.top / travel));
+      progress.style.transform = `scaleX(${amount})`;
+
+      if (!reducedMotion && Number.isFinite(video.duration) && video.duration > 0) {
+        const targetTime = amount * Math.max(0, video.duration - 0.05);
+        if (Math.abs(video.currentTime - targetTime) > 0.015) video.currentTime = targetTime;
+      }
+    };
+
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+
+    const handleMetadata = () => {
+      video.pause();
+      if (reducedMotion) video.currentTime = 0.01;
+      requestUpdate();
+    };
+
+    video.addEventListener("loadedmetadata", handleMetadata);
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+    requestUpdate();
+
+    return () => {
+      video.removeEventListener("loadedmetadata", handleMetadata);
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      if (frame) window.cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  return (
+    <section className="craft-film" ref={sectionRef} aria-label="Scroll-controlled finish carpentry showcase">
+      <div className="craft-film-sticky">
+        <video
+          ref={videoRef}
+          className="craft-film-video"
+          muted
+          playsInline
+          preload="auto"
+          poster="/images/scroll-video-poster.webp"
+          tabIndex={-1}
+          aria-hidden="true"
+        >
+          <source src="/video/finish-carpentry-scroll.mp4" type="video/mp4" />
+        </video>
+        <div className="craft-film-shade" />
+        <div className="craft-film-copy">
+          <p className="eyebrow light">Scroll to explore</p>
+          <h2>Craftsmanship,<br />frame by frame.</h2>
+          <p>Move through a finished interior where trim, panel molding, and built-in details work together.</p>
+        </div>
+        <div className="craft-film-progress" aria-hidden="true"><span ref={progressRef} /></div>
+      </div>
+    </section>
+  );
+}
 
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState<(typeof filters)[number]>("All");
@@ -127,6 +204,8 @@ export default function Home() {
           <article><span>04</span><h3>Stairs &amp; custom work</h3><p>Stair trim, railings, decorative woodwork, and project-specific finish details.</p></article>
         </div>
       </section>
+
+      <ScrollCraftFilm />
 
       <section className="portfolio" id="work">
         <div className="portfolio-top">

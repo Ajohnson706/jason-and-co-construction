@@ -33,6 +33,8 @@ test("server-renders the finish carpentry website", async () => {
   assert.match(html, /href="tel:\+17064965687"/);
   assert.match(html, /jasonandco\.jason@gmail\.com/);
   assert.match(html, /application\/ld\+json/);
+  assert.match(html, /finish-carpentry-scroll\.mp4/);
+  assert.match(html, /Scroll to explore/);
   assert.doesNotMatch(html, /To be added for launch|Demo edition|Bathroom remodeling/i);
 });
 
@@ -54,5 +56,8 @@ test("ships the carpentry portfolio assets and production metadata", async () =>
     "woodwork-fabrication.webp",
     "fireplace-mantel.webp",
     "fireplace-trim.webp",
+    "scroll-video-poster.webp",
   ].map((name) => access(new URL(`../public/images/${name}`, import.meta.url))));
+
+  await access(new URL("../public/video/finish-carpentry-scroll.mp4", import.meta.url));
 });

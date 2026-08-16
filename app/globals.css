@@ -49,6 +49,16 @@ button { font:inherit; }
 .service-list h3 { font-family:Georgia,serif; font-size:29px; font-weight:400; line-height:1.05; margin:88px 0 18px; }
 .service-list p { color:rgba(255,255,255,.58); font-size:14px; line-height:1.65; margin:0; }
 
+.craft-film { background:var(--ink); height:280vh; position:relative; }
+.craft-film-sticky { color:white; height:100svh; min-height:620px; overflow:hidden; position:sticky; top:0; }
+.craft-film-video { height:100%; inset:0; object-fit:cover; position:absolute; width:100%; }
+.craft-film-shade { background:linear-gradient(90deg,rgba(9,10,7,.84) 0%,rgba(9,10,7,.48) 42%,rgba(9,10,7,.08) 76%),linear-gradient(0deg,rgba(9,10,7,.52),transparent 45%); inset:0; position:absolute; }
+.craft-film-copy { left:7vw; max-width:680px; position:absolute; top:50%; transform:translateY(-50%); z-index:2; }
+.craft-film-copy h2 { font-size:clamp(58px,6.5vw,96px); line-height:.95; margin:0 0 28px; }
+.craft-film-copy>p:last-child { color:rgba(255,255,255,.74); font-size:17px; line-height:1.65; margin:0; max-width:520px; }
+.craft-film-progress { background:rgba(255,255,255,.22); bottom:34px; height:2px; left:7vw; overflow:hidden; position:absolute; right:7vw; z-index:2; }
+.craft-film-progress span { background:var(--gold); display:block; height:100%; transform:scaleX(0); transform-origin:left center; will-change:transform; }
+
 .portfolio { padding:130px 4vw 150px; }
 .portfolio-top { align-items:end; display:flex; justify-content:space-between; margin:0 4vw 65px; }
 .filters { display:flex; gap:8px; }
@@ -137,6 +147,13 @@ footer p:last-child { text-align:right; }
   .service-list article { border-bottom:1px solid rgba(255,255,255,.18); border-right:0; min-height:auto; padding:26px 0 32px; }
   .service-list article:last-child { border-bottom:0; }
   .service-list h3 { margin:46px 0 14px; }
+  .craft-film { height:240vh; }
+  .craft-film-sticky { min-height:560px; }
+  .craft-film-video { object-position:58% center; }
+  .craft-film-copy { left:22px; max-width:calc(100vw - 44px); }
+  .craft-film-copy h2 { font-size:clamp(48px,14vw,68px); }
+  .craft-film-copy>p:last-child { font-size:15px; max-width:360px; }
+  .craft-film-progress { bottom:24px; left:22px; right:22px; }
   .portfolio-top { align-items:flex-start; flex-direction:column; gap:36px; margin:0 0 42px; }
   .filters { flex-wrap:wrap; }
   .project-grid { display:flex; flex-direction:column; }
@@ -158,4 +175,5 @@ footer p:last-child { text-align:right; }
 @media (prefers-reduced-motion:reduce) {
   html { scroll-behavior:auto; }
   *,*::before,*::after { transition-duration:.01ms !important; }
+  .craft-film { height:100svh; }
 }
