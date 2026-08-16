@@ -6,8 +6,16 @@ const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Jason & Co. Construction | Interior Remodeling & Finish Work",
-  description: "Residential construction, bathroom and tile renovation, flooring, custom details, and interior finish work by Jason & Co. Construction.",
+  title: "Jason & Co. Construction | Finish Carpentry & New Construction",
+  description: "Finish carpentry for new construction and residential projects, including interior trim, crown molding, casing, built-ins, cabinetry, stair trim, and custom woodwork.",
+  alternates: { canonical: "https://jasonandcoconstruction.com/" },
+  openGraph: {
+    title: "Jason & Co. Construction | Finish Carpentry",
+    description: "Precision trim, built-ins, cabinetry, and custom woodwork for new construction and residential projects.",
+    url: "https://jasonandcoconstruction.com/",
+    siteName: "Jason & Co. Construction",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
