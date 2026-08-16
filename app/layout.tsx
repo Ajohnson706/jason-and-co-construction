@@ -7,11 +7,11 @@ const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"]
 
 export const metadata: Metadata = {
   title: "Jason & Co. Construction | Finish Carpentry & New Construction",
-  description: "Finish carpentry for new construction and residential projects, including interior trim, crown molding, casing, built-ins, cabinetry, stair trim, and custom woodwork.",
+  description: "Finish carpentry for new construction and residential projects in Augusta and the CSRA, including interior trim, crown molding, casing, built-ins, cabinetry, stair trim, and custom woodwork.",
   alternates: { canonical: "https://jasonandcoconstruction.com/" },
   openGraph: {
     title: "Jason & Co. Construction | Finish Carpentry",
-    description: "Precision trim, built-ins, cabinetry, and custom woodwork for new construction and residential projects.",
+    description: "Precision trim, built-ins, cabinetry, and custom woodwork for new construction and residential projects in Augusta and the CSRA.",
     url: "https://jasonandcoconstruction.com/",
     siteName: "Jason & Co. Construction",
     type: "website",

@@ -29,12 +29,17 @@ test("server-renders the finish carpentry website", async () => {
   const html = await response.text();
   assert.match(html, /<title>Jason &amp; Co\. Construction \| Finish Carpentry &amp; New Construction<\/title>/i);
   assert.match(html, /The details that/);
-  assert.match(html, /Finish carpentry · New construction/);
+  assert.match(html, /Finish carpentry · Augusta &amp; the CSRA/);
   assert.match(html, /href="tel:\+17064965687"/);
   assert.match(html, /jasonandco\.jason@gmail\.com/);
   assert.match(html, /application\/ld\+json/);
   assert.match(html, /finish-carpentry-scroll\.mp4/);
-  assert.match(html, /Scroll to explore/);
+  assert.match(html, /Scroll to move through the craftsmanship/);
+  assert.match(html, /Request an estimate/);
+  assert.match(html, /Project location/);
+  assert.match(html, /Serving Augusta and the CSRA/);
+  assert.match(html, /Central Savannah River Area/);
+  assert.match(html, /aria-label="Quick contact"/);
   assert.doesNotMatch(html, /To be added for launch|Demo edition|Bathroom remodeling/i);
 });
 
@@ -47,6 +52,7 @@ test("ships the carpentry portfolio assets and production metadata", async () =>
   assert.match(page, /New-construction trim/);
   assert.match(page, /Built-ins &amp; cabinetry/);
   assert.match(layout, /Finish Carpentry & New Construction/);
+  assert.match(layout, /Augusta and the CSRA/);
   assert.match(layout, /canonical: "https:\/\/jasonandcoconstruction\.com\/"/);
 
   await Promise.all([

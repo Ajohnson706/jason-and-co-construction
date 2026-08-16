@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 
 type Project = {
   title: string;
@@ -28,25 +28,24 @@ const phoneDisplay = "(706) 496-5687";
 const phoneLink = "+17064965687";
 const email = "jasonandco.jason@gmail.com";
 
-function ScrollCraftFilm() {
-  const sectionRef = useRef<HTMLElement>(null);
+function ScrollVideoBackground() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const progressRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const section = sectionRef.current;
     const video = videoRef.current;
     const progress = progressRef.current;
-    if (!section || !video || !progress) return;
+    if (!video || !progress) return;
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let frame = 0;
+    let objectUrl = "";
+    const controller = new AbortController();
 
     const update = () => {
       frame = 0;
-      const rect = section.getBoundingClientRect();
-      const travel = Math.max(1, section.offsetHeight - window.innerHeight);
-      const amount = Math.min(1, Math.max(0, -rect.top / travel));
+      const travel = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const amount = Math.min(1, Math.max(0, window.scrollY / travel));
       progress.style.transform = `scaleX(${amount})`;
 
       if (!reducedMotion && Number.isFinite(video.duration) && video.duration > 0) {
@@ -68,40 +67,54 @@ function ScrollCraftFilm() {
     video.addEventListener("loadedmetadata", handleMetadata);
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate);
-    requestUpdate();
+
+    const prepareVideo = async () => {
+      try {
+        const response = await fetch(video.dataset.scrollSource ?? "", {
+          cache: "force-cache",
+          signal: controller.signal,
+        });
+        if (!response.ok) throw new Error("Unable to load scroll film");
+
+        const bytes = await response.arrayBuffer();
+        objectUrl = URL.createObjectURL(new Blob([bytes], { type: "video/mp4" }));
+        video.src = objectUrl;
+        video.load();
+      } catch {
+        if (!controller.signal.aborted) {
+          video.src = video.dataset.scrollSource ?? "";
+          video.load();
+        }
+      }
+    };
+
+    void prepareVideo();
 
     return () => {
       video.removeEventListener("loadedmetadata", handleMetadata);
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
       if (frame) window.cancelAnimationFrame(frame);
+      controller.abort();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, []);
 
   return (
-    <section className="craft-film" ref={sectionRef} aria-label="Scroll-controlled finish carpentry showcase">
-      <div className="craft-film-sticky">
-        <video
-          ref={videoRef}
-          className="craft-film-video"
-          muted
-          playsInline
-          preload="auto"
-          poster="/images/scroll-video-poster.webp"
-          tabIndex={-1}
-          aria-hidden="true"
-        >
-          <source src="/video/finish-carpentry-scroll.mp4" type="video/mp4" />
-        </video>
-        <div className="craft-film-shade" />
-        <div className="craft-film-copy">
-          <p className="eyebrow light">Scroll to explore</p>
-          <h2>Craftsmanship,<br />frame by frame.</h2>
-          <p>Move through a finished interior where trim, panel molding, and built-in details work together.</p>
-        </div>
-        <div className="craft-film-progress" aria-hidden="true"><span ref={progressRef} /></div>
-      </div>
-    </section>
+    <div className="scroll-film-backdrop" aria-hidden="true">
+      <video
+        ref={videoRef}
+        className="scroll-film-video"
+        muted
+        playsInline
+        preload="auto"
+        poster="/images/scroll-video-poster.webp"
+        data-scroll-source="/video/finish-carpentry-scroll.mp4"
+        tabIndex={-1}
+      />
+      <div className="scroll-film-shade" />
+      <div className="scroll-film-progress"><span ref={progressRef} /></div>
+    </div>
   );
 }
 
@@ -126,8 +139,26 @@ export default function Home() {
     (project) => activeFilter === "All" || project.category === activeFilter,
   );
 
+  const handleEstimateSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const subject = `Estimate request — ${data.get("projectType") || "Finish carpentry"}`;
+    const body = [
+      `Name: ${data.get("name") || ""}`,
+      `Phone: ${data.get("phone") || ""}`,
+      `Project location: ${data.get("location") || ""}`,
+      `Project type: ${data.get("projectType") || ""}`,
+      `Desired timeline: ${data.get("timeline") || ""}`,
+      "",
+      "Project details:",
+      `${data.get("details") || ""}`,
+    ].join("\n");
+
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
   return (
-    <main>
+    <main className="site-shell">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -138,6 +169,7 @@ export default function Home() {
             url: "https://jasonandcoconstruction.com/",
             telephone: phoneLink,
             email,
+            areaServed: ["Augusta, Georgia", "Central Savannah River Area"],
             serviceType: [
               "Finish carpentry",
               "Interior trim installation",
@@ -151,6 +183,7 @@ export default function Home() {
           }),
         }}
       />
+      <ScrollVideoBackground />
       <header className="site-header">
         <a className="brand" href="#top" aria-label="Jason and Company Construction home">
           <span className="brand-mark">J&amp;Co.</span>
@@ -165,10 +198,9 @@ export default function Home() {
       </header>
 
       <section className="hero" id="top">
-        <Image className="hero-image" src="/images/fireplace-mantel.webp" alt="Finished fireplace mantel showcasing detailed finish carpentry" fill priority sizes="100vw" />
         <div className="hero-shade" />
         <div className="hero-content">
-          <p className="eyebrow light">Finish carpentry · New construction</p>
+          <p className="eyebrow light">Finish carpentry · Augusta &amp; the CSRA</p>
           <h1>The details that<br />finish the job.</h1>
           <p className="hero-copy">Precise interior trim, cabinetry, built-ins, and custom woodwork for builders, homeowners, and new-construction projects.</p>
           <div className="hero-actions">
@@ -179,6 +211,7 @@ export default function Home() {
         <div className="hero-proof" aria-label="Project focus">
           <span>New construction</span><span>Finish carpentry</span><span>Residential</span>
         </div>
+        <p className="scroll-cue">Scroll to move through the craftsmanship <span aria-hidden="true">↓</span></p>
       </section>
 
       <section className="intro" id="approach">
@@ -205,7 +238,21 @@ export default function Home() {
         </div>
       </section>
 
-      <ScrollCraftFilm />
+      <section className="service-area" id="service-area">
+        <div>
+          <p className="eyebrow light">Where we work</p>
+          <h2>Serving Augusta and the CSRA.</h2>
+        </div>
+        <div className="service-area-copy">
+          <p>Jason &amp; Co. works with builders and homeowners throughout Augusta and the Central Savannah River Area on new-construction and residential finish-carpentry projects.</p>
+          <div className="service-area-notes">
+            <span>Augusta, Georgia</span>
+            <span>CSRA</span>
+            <span>New construction</span>
+            <span>Residential interiors</span>
+          </div>
+        </div>
+      </section>
 
       <section className="portfolio" id="work">
         <div className="portfolio-top">
@@ -241,6 +288,30 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="estimate" id="estimate">
+        <div className="estimate-intro">
+          <p className="eyebrow light">Request an estimate</p>
+          <h2>Tell us what you’re building.</h2>
+          <p>Send the basics now. Jason can follow up about plans, measurements, scheduling, and project photos.</p>
+          <div className="estimate-direct">
+            <a href={`tel:${phoneLink}`}>{phoneDisplay}</a>
+            <a href={`mailto:${email}`}>{email}</a>
+          </div>
+        </div>
+        <form className="estimate-form" onSubmit={handleEstimateSubmit}>
+          <div className="form-grid">
+            <label><span>Name</span><input name="name" autoComplete="name" required /></label>
+            <label><span>Phone</span><input name="phone" type="tel" autoComplete="tel" required /></label>
+            <label className="form-wide"><span>Project location</span><input name="location" autoComplete="street-address" placeholder="City or project address" required /></label>
+            <label><span>Project type</span><select name="projectType" defaultValue="" required><option value="" disabled>Select one</option><option>New-construction trim</option><option>Molding and casing</option><option>Built-ins and cabinetry</option><option>Fireplace mantel and wall trim</option><option>Stairs and custom work</option><option>Other finish carpentry</option></select></label>
+            <label><span>Desired timeline</span><select name="timeline" defaultValue=""><option value="">Not sure yet</option><option>As soon as possible</option><option>Within 1–3 months</option><option>Within 3–6 months</option><option>More than 6 months out</option></select></label>
+            <label className="form-wide"><span>Project details</span><textarea name="details" rows={5} placeholder="Describe the rooms, trim package, plans, or custom work." required /></label>
+          </div>
+          <button className="button estimate-submit" type="submit">Prepare estimate email <span aria-hidden="true">↗</span></button>
+          <p className="form-note">This opens your email app with the project details filled in. You can attach photos or plans before sending.</p>
+        </form>
+      </section>
+
       <section className="contact" id="contact">
         <div>
           <p className="eyebrow light">Start a conversation</p>
@@ -260,9 +331,15 @@ export default function Home() {
 
       <footer>
         <div className="brand footer-brand"><span className="brand-mark">J&amp;Co.</span><span className="brand-name">Jason &amp; Co. Construction</span></div>
-        <p>Finish carpentry for new construction and residential projects.</p>
+        <p>Finish carpentry for Augusta and the CSRA.</p>
         <p><a href={`tel:${phoneLink}`}>{phoneDisplay}</a> · <a href={`mailto:${email}`}>Email Jason</a></p>
       </footer>
+
+      <nav className="floating-contact" aria-label="Quick contact">
+        <a href={`tel:${phoneLink}`}><span aria-hidden="true">☎</span> Call</a>
+        <a href={`sms:${phoneLink}`}><span aria-hidden="true">✦</span> Text</a>
+        <a className="floating-estimate" href="#estimate">Request estimate</a>
+      </nav>
 
       {selectedProject && (
         <div className="lightbox" role="dialog" aria-modal="true" aria-label={selectedProject.title} onClick={() => setSelectedProject(null)}>
