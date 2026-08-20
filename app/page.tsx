@@ -58,15 +58,34 @@ function ScrollVideoBackground() {
       if (!frame) frame = window.requestAnimationFrame(update);
     };
 
+    const unlockVideo = async () => {
+      if (reducedMotion) return;
+      try {
+        await video.play();
+        video.pause();
+        requestUpdate();
+      } catch {
+        // Mobile browsers can require the first touch before allowing media control.
+      }
+    };
+
+    const handleFirstInteraction = () => {
+      void unlockVideo();
+    };
+
     const handleMetadata = () => {
       video.pause();
       if (reducedMotion) video.currentTime = 0.01;
+      else void unlockVideo();
       requestUpdate();
     };
 
     video.addEventListener("loadedmetadata", handleMetadata);
     window.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate);
+    window.addEventListener("orientationchange", requestUpdate);
+    window.addEventListener("touchstart", handleFirstInteraction, { passive: true, once: true });
+    window.addEventListener("pointerdown", handleFirstInteraction, { passive: true, once: true });
 
     const prepareVideo = async () => {
       try {
@@ -94,6 +113,9 @@ function ScrollVideoBackground() {
       video.removeEventListener("loadedmetadata", handleMetadata);
       window.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
+      window.removeEventListener("orientationchange", requestUpdate);
+      window.removeEventListener("touchstart", handleFirstInteraction);
+      window.removeEventListener("pointerdown", handleFirstInteraction);
       if (frame) window.cancelAnimationFrame(frame);
       controller.abort();
       if (objectUrl) URL.revokeObjectURL(objectUrl);

@@ -34,6 +34,7 @@ test("server-renders the finish carpentry website", async () => {
   assert.match(html, /jasonandco\.jason@gmail\.com/);
   assert.match(html, /application\/ld\+json/);
   assert.match(html, /finish-carpentry-scroll\.mp4/);
+  assert.match(html, /playsInline/);
   assert.match(html, /Scroll to move through the craftsmanship/);
   assert.match(html, /Request an estimate/);
   assert.match(html, /Project location/);
