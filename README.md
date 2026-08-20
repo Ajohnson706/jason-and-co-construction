@@ -9,7 +9,7 @@ Live site: https://jasonandcoconstruction.com/
 Prerequisite: Node.js 22.13 or newer.
 
 ```bash
-git clone https://github.com/ytngino706-web/jason-and-co-construction.git
+git clone --branch codex/website-source https://github.com/Ajohnson706/jason-and-co-construction.git
 cd jason-and-co-construction
 npm install
 npm run dev
