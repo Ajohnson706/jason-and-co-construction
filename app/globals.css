@@ -79,13 +79,13 @@ button { font:inherit; }
 .filters button { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.28); border-radius:999px; color:rgba(255,255,255,.76); cursor:pointer; font-size:11px; padding:10px 15px; transition:.2s ease; }
 .filters button:hover,.filters button.active { background:var(--gold); border-color:var(--gold); color:var(--ink); }
 .project-grid { display:grid; gap:14px; grid-auto-rows:260px; grid-template-columns:repeat(12,1fr); }
-.project-card { background:#ddd; border:0; color:white; cursor:zoom-in; grid-column:span 5; overflow:hidden; padding:0; position:relative; text-align:left; }
+.project-card { background:#171815; border:0; color:white; cursor:zoom-in; grid-column:span 5; overflow:hidden; padding:0; position:relative; text-align:left; }
 .project-card-0,.project-card-3 { grid-column:span 7; grid-row:span 2; }
 .project-card-1,.project-card-2 { grid-column:span 5; }
 .project-card-4 { grid-column:span 5; grid-row:span 2; }
 .project-card-5,.project-card-6 { grid-column:span 7; }
 .project-card-7 { grid-column:span 12; }
-.project-card img { object-fit:cover; transition:transform .7s cubic-bezier(.2,.7,.2,1); }
+.project-card img { object-fit:contain; transition:transform .7s cubic-bezier(.2,.7,.2,1); }
 .project-card:hover img { transform:scale(1.035); }
 .project-overlay { background:linear-gradient(0deg,rgba(9,10,7,.75),transparent 55%); inset:0; position:absolute; }
 .comparison-badge { background:rgba(19,20,16,.86); border:1px solid rgba(255,255,255,.42); border-radius:999px; color:white; font-family:var(--font-geist-mono),monospace; font-size:9px; left:20px; letter-spacing:.1em; padding:8px 11px; position:absolute; text-transform:uppercase; top:20px; }
@@ -155,7 +155,7 @@ footer p:last-child { text-align:right; }
 .lightbox-image img { object-fit:contain; }
 .lightbox-comparison { height:min(72vh,720px); max-width:1250px; }
 .before-after { --comparison-position:50%; background:#111; height:100%; overflow:hidden; position:relative; user-select:none; width:100%; }
-.before-after>img,.after-image img { object-fit:cover; }
+.before-after>img,.after-image img { object-fit:contain; }
 .after-image { clip-path:inset(0 calc(100% - var(--comparison-position)) 0 0); inset:0; position:absolute; }
 .before-after input { cursor:ew-resize; height:100%; inset:0; margin:0; opacity:0; position:absolute; width:100%; z-index:4; }
 .comparison-handle { background:white; bottom:0; left:var(--comparison-position); pointer-events:none; position:absolute; top:0; transform:translateX(-1px); width:2px; z-index:3; }
