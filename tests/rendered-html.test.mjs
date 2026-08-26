@@ -30,7 +30,7 @@ test("server-renders the finish carpentry website", async () => {
   assert.match(html, /<title>Jason &amp; Co\. Construction \| Finish Carpentry &amp; New Construction<\/title>/i);
   assert.match(html, /The details that/);
   assert.match(html, /Finish carpentry · Augusta &amp; the CSRA/);
-  assert.match(html, /href="tel:\+17064965687"/);
+  assert.match(html, /href="tel:\+17064349522"/);
   assert.match(html, /jasonandco\.jason@gmail\.com/);
   assert.match(html, /application\/ld\+json/);
   assert.match(html, /finish-carpentry-scroll\.mp4/);

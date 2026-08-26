@@ -24,8 +24,8 @@ const projects: Project[] = [
 
 const filters = ["All", "Trim & Details", "Cabinetry", "Custom Woodwork"] as const;
 
-const phoneDisplay = "(706) 496-5687";
-const phoneLink = "+17064965687";
+const phoneDisplay = "(706) 434-9522";
+const phoneLink = "+17064349522";
 const email = "jasonandco.jason@gmail.com";
 
 function ScrollVideoBackground() {
