@@ -1,32 +1,49 @@
 "use client";
 
 import Image from "next/image";
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { type CSSProperties, type FormEvent, useEffect, useRef, useState } from "react";
 
 type Project = {
   title: string;
-  category: "Trim & Details" | "Cabinetry" | "Custom Woodwork";
+  category: "Before & After" | "Trim & Details" | "Cabinetry" | "Flooring & Tile";
   image: string;
   alt: string;
+  beforeImage?: string;
+  beforeAlt?: string;
+  gallery?: { image: string; alt: string }[];
   position?: string;
 };
 
 const projects: Project[] = [
-  { title: "Custom fireplace surround", category: "Trim & Details", image: "/images/fireplace-mantel.webp", alt: "Finished white fireplace mantel with detailed trim and brick surround" },
-  { title: "New-construction cabinetry", category: "Cabinetry", image: "/images/custom-cabinet-build.webp", alt: "Custom raised-panel wood cabinetry being installed in a new interior" },
-  { title: "Built-in cabinet installation", category: "Cabinetry", image: "/images/cabinet-installation.webp", alt: "Built-in wood cabinets and interior trim during installation" },
-  { title: "Cabinet door detailing", category: "Custom Woodwork", image: "/images/cabinetry-detail.webp", alt: "Crafted wood cabinet doors with detailed raised panels" },
-  { title: "Mantel and wall trim", category: "Trim & Details", image: "/images/fireplace-trim.webp", alt: "White fireplace mantel and coordinating interior trim" },
-  { title: "Custom wood fabrication", category: "Custom Woodwork", image: "/images/woodwork-fabrication.webp", alt: "Custom wood components prepared for finish carpentry installation" },
-  { title: "Fitted interior cabinetry", category: "Cabinetry", image: "/images/custom-cabinetry.webp", alt: "Custom unfinished wood cabinets fitted into an interior space" },
-  { title: "Fireplace finish package", category: "Trim & Details", image: "/images/brick-fireplace.webp", alt: "Brick fireplace completed with bright white mantel and base trim" },
+  { title: "Lake Aumond Project — 2019", category: "Before & After", beforeImage: "/images/portfolio-2026/lake-aumond-2019-before.webp", beforeAlt: "Lake Aumond interior before the opening was trimmed and the hardwood floor was refinished", image: "/images/portfolio-2026/lake-aumond-2019-after.webp", alt: "Lake Aumond interior after trim work, painting, and hardwood floor refinishing" },
+  { title: "Summerville Bathroom Remodel — 2023", category: "Before & After", beforeImage: "/images/portfolio-2026/bathroom-before.webp", beforeAlt: "Summerville bathroom with the damaged subfloor exposed before reconstruction", image: "/images/portfolio-2026/bathroom-after.webp", alt: "Completed Summerville bathroom remodel with herringbone tile, new vanity, trim, and fixtures" },
+  { title: "Fireplace finish package", category: "Trim & Details", image: "/images/portfolio-2026/fireplace-finish.webp", alt: "Completed brick fireplace with a bright white mantel and trim", gallery: [{ image: "/images/portfolio-2026/fireplace-finish.webp", alt: "Completed brick fireplace with a bright white mantel and trim" }, { image: "/images/portfolio-2026/fireplace-brick.webp", alt: "Brick fireplace detail framed by white trim" }] },
+  { title: "Custom drawer construction", category: "Cabinetry", image: "/images/portfolio-2026/custom-drawer.webp", alt: "Hand-built wood drawer with fitted joinery", gallery: [{ image: "/images/portfolio-2026/drawer-build.webp", alt: "Custom drawer components during fabrication" }, { image: "/images/portfolio-2026/custom-drawer.webp", alt: "Hand-built wood drawer with fitted joinery" }, { image: "/images/portfolio-2026/drawer-install.webp", alt: "Finished custom drawer ready for installation" }] },
+  { title: "Custom built-in cabinetry", category: "Cabinetry", image: "/images/portfolio-2026/custom-cabinetry.webp", alt: "Custom built-in cabinetry under construction", gallery: [{ image: "/images/portfolio-2026/cabinetry-wide.webp", alt: "Wide view of custom cabinetry fabrication" }, { image: "/images/portfolio-2026/custom-cabinetry.webp", alt: "Custom built-in cabinetry under construction" }, { image: "/images/portfolio-2026/cabinetry-install.webp", alt: "Custom built-in cabinetry installed in place" }] },
+  { title: "Refinished hardwood floor", category: "Flooring & Tile", image: "/images/portfolio-2026/hardwood-finish.webp", alt: "Freshly refinished hardwood floor with a polished finish", gallery: [{ image: "/images/portfolio-2026/hardwood-wide.webp", alt: "Wide room view of a refinished hardwood floor" }, { image: "/images/portfolio-2026/hardwood-finish.webp", alt: "Freshly refinished hardwood floor with a polished finish" }, { image: "/images/portfolio-2026/hardwood-detail.webp", alt: "Close detail of the hardwood floor finish" }] },
+  { title: "Detailed shower tile", category: "Flooring & Tile", image: "/images/portfolio-2026/shower-tile-detail.webp", alt: "Detailed shower floor tile installation", gallery: [{ image: "/images/portfolio-2026/tile-install.webp", alt: "Herringbone tile being installed" }, { image: "/images/portfolio-2026/bathroom-tile.webp", alt: "Completed bathroom floor tile and trim" }, { image: "/images/portfolio-2026/shower-tile-detail.webp", alt: "Detailed shower floor tile installation" }] },
 ];
 
-const filters = ["All", "Trim & Details", "Cabinetry", "Custom Woodwork"] as const;
+const filters = ["All", "Before & After", "Trim & Details", "Cabinetry", "Flooring & Tile"] as const;
 
 const phoneDisplay = "(706) 434-9522";
 const phoneLink = "+17064349522";
 const email = "jasonandco.jason@gmail.com";
+
+function BeforeAfterSlider({ project }: { project: Project }) {
+  const [position, setPosition] = useState(50);
+
+  return (
+    <div className="before-after" style={{ "--comparison-position": `${position}%` } as CSSProperties}>
+      <Image src={project.beforeImage!} alt={project.beforeAlt ?? `Before ${project.title}`} fill sizes="90vw" />
+      <div className="after-image"><Image src={project.image} alt={project.alt} fill sizes="90vw" /></div>
+      <span className="comparison-label comparison-label-before">Before</span>
+      <span className="comparison-label comparison-label-after">After</span>
+      <span className="comparison-handle" aria-hidden="true"><span>↔</span></span>
+      <input type="range" min="0" max="100" value={position} onInput={(event) => setPosition(Number(event.currentTarget.value))} aria-label={`Compare before and after for ${project.title}`} />
+    </div>
+  );
+}
 
 function ScrollVideoBackground() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -143,11 +160,15 @@ function ScrollVideoBackground() {
 export default function Home() {
   const [activeFilter, setActiveFilter] = useState<(typeof filters)[number]>("All");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [galleryIndex, setGalleryIndex] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!selectedProject) return;
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") setSelectedProject(null);
+      if (selectedProject.gallery && event.key === "ArrowRight") setGalleryIndex((index) => (index + 1) % selectedProject.gallery!.length);
+      if (selectedProject.gallery && event.key === "ArrowLeft") setGalleryIndex((index) => (index - 1 + selectedProject.gallery!.length) % selectedProject.gallery!.length);
     };
     document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleKey);
@@ -211,10 +232,12 @@ export default function Home() {
           <span className="brand-mark">J&amp;Co.</span>
           <span className="brand-name">Jason &amp; Co. Construction</span>
         </a>
-        <nav aria-label="Main navigation">
+        <button className="menu-toggle" aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}><span /><span /></button>
+        <nav className={menuOpen ? "nav-open" : ""} aria-label="Main navigation" onClick={() => setMenuOpen(false)}>
           <a href="#services">Services</a>
           <a href="#work">Selected work</a>
           <a href="#approach">Approach</a>
+          <a href="#estimate">Estimate</a>
         </nav>
         <a className="header-cta" href={`tel:${phoneLink}`}>Call {phoneDisplay}</a>
       </header>
@@ -276,9 +299,15 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="trust-strip" aria-label="What clients can expect">
+        <div><span>01</span><strong>Clear project scope</strong><p>Details, materials, and expectations reviewed before work begins.</p></div>
+        <div><span>02</span><strong>Careful coordination</strong><p>Finish work planned around the space, schedule, and surrounding trades.</p></div>
+        <div><span>03</span><strong>Clean execution</strong><p>Consistent reveals, tight joints, and close attention to the final presentation.</p></div>
+      </section>
+
       <section className="portfolio" id="work">
         <div className="portfolio-top">
-          <div><p className="eyebrow">Selected work</p><h2>Details that complete the space.</h2></div>
+          <div><p className="eyebrow">Selected work</p><h2>Built well. Finished beautifully.</h2></div>
           <div className="filters" role="group" aria-label="Filter projects">
             {filters.map((filter) => (
               <button key={filter} className={activeFilter === filter ? "active" : ""} onClick={() => setActiveFilter(filter)} aria-pressed={activeFilter === filter}>{filter}</button>
@@ -287,9 +316,11 @@ export default function Home() {
         </div>
         <div className="project-grid" aria-live="polite">
           {visibleProjects.map((project, index) => (
-            <button className={`project-card project-card-${index % 5}`} key={project.title} onClick={() => setSelectedProject(project)} aria-label={`Open ${project.title} project image`}>
+            <button className={`project-card project-card-${index % 5}`} key={project.title} onClick={() => { setGalleryIndex(0); setSelectedProject(project); }} aria-label={`Open ${project.title} project image`}>
               <Image src={project.image} alt={project.alt} fill sizes="(max-width: 720px) 100vw, (max-width: 1100px) 50vw, 40vw" style={{ objectPosition: project.position ?? "center" }} />
               <span className="project-overlay" />
+              {project.beforeImage && <span className="comparison-badge">Before &amp; after</span>}
+              {project.gallery && <span className="gallery-count">{project.gallery.length} photos</span>}
               <span className="project-caption"><small>{project.category}</small><strong>{project.title}</strong></span>
               <span className="project-open" aria-hidden="true">↗</span>
             </button>
@@ -315,6 +346,7 @@ export default function Home() {
           <p className="eyebrow light">Request an estimate</p>
           <h2>Tell us what you’re building.</h2>
           <p>Send the basics now. Jason can follow up about plans, measurements, scheduling, and project photos.</p>
+          <ul className="estimate-promises"><li>No-pressure project review</li><li>Clear next steps</li><li>Photos and plans welcome</li></ul>
           <div className="estimate-direct">
             <a href={`tel:${phoneLink}`}>{phoneDisplay}</a>
             <a href={`mailto:${email}`}>{email}</a>
@@ -329,7 +361,7 @@ export default function Home() {
             <label><span>Desired timeline</span><select name="timeline" defaultValue=""><option value="">Not sure yet</option><option>As soon as possible</option><option>Within 1–3 months</option><option>Within 3–6 months</option><option>More than 6 months out</option></select></label>
             <label className="form-wide"><span>Project details</span><textarea name="details" rows={5} placeholder="Describe the rooms, trim package, plans, or custom work." required /></label>
           </div>
-          <button className="button estimate-submit" type="submit">Prepare estimate email <span aria-hidden="true">↗</span></button>
+          <button className="button estimate-submit" type="submit">Start your project request <span aria-hidden="true">↗</span></button>
           <p className="form-note">This opens your email app with the project details filled in. You can attach photos or plans before sending.</p>
         </form>
       </section>
@@ -366,8 +398,19 @@ export default function Home() {
       {selectedProject && (
         <div className="lightbox" role="dialog" aria-modal="true" aria-label={selectedProject.title} onClick={() => setSelectedProject(null)}>
           <button className="lightbox-close" onClick={() => setSelectedProject(null)} aria-label="Close project image">Close ×</button>
-          <div className="lightbox-image" onClick={(event) => event.stopPropagation()}>
-            <Image src={selectedProject.image} alt={selectedProject.alt} fill sizes="90vw" />
+          <div className={`lightbox-image ${selectedProject.beforeImage ? "lightbox-comparison" : ""}`} onClick={(event) => event.stopPropagation()}>
+            {selectedProject.beforeImage ? (
+              <BeforeAfterSlider project={selectedProject} />
+            ) : selectedProject.gallery ? (
+              <>
+                <Image src={selectedProject.gallery[galleryIndex].image} alt={selectedProject.gallery[galleryIndex].alt} fill sizes="90vw" />
+                <button className="gallery-nav gallery-prev" onClick={() => setGalleryIndex((galleryIndex - 1 + selectedProject.gallery!.length) % selectedProject.gallery!.length)} aria-label="Previous project photo">←</button>
+                <button className="gallery-nav gallery-next" onClick={() => setGalleryIndex((galleryIndex + 1) % selectedProject.gallery!.length)} aria-label="Next project photo">→</button>
+                <span className="gallery-position">{galleryIndex + 1} / {selectedProject.gallery.length}</span>
+              </>
+            ) : (
+              <Image src={selectedProject.image} alt={selectedProject.alt} fill sizes="90vw" />
+            )}
             <div className="lightbox-caption"><span>{selectedProject.category}</span><strong>{selectedProject.title}</strong></div>
           </div>
         </div>
