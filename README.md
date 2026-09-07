@@ -9,11 +9,13 @@ Live site: https://jasonandcoconstruction.com/
 Prerequisite: Node.js 22.13 or newer.
 
 ```bash
-git clone --branch codex/website-source https://github.com/Ajohnson706/jason-and-co-construction.git
+git clone https://github.com/Ajohnson706/jason-and-co-construction.git
 cd jason-and-co-construction
 npm install
 npm run dev
 ```
+
+`main` is the current branch — it has the latest portfolio photos and business info. `codex/website-source` is an older branch kept for history; don't develop from it.
 
 Open the local address printed by the development server. The main website code is in `app/page.tsx` and `app/globals.css`. Portfolio photos are in `public/images`, and the scrolling background video is in `public/video`.
 
