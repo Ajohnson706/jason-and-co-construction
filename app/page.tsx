@@ -182,19 +182,36 @@ export default function Home() {
     (project) => activeFilter === "All" || project.category === activeFilter,
   );
 
-  const handleEstimateSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleEstimateSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    const subject = `Estimate request — ${data.get("projectType") || "Finish carpentry"}`;
+    const name = String(data.get("name") || "");
+    const phone = String(data.get("phone") || "");
+    const location = String(data.get("location") || "");
+    const projectType = String(data.get("projectType") || "");
+    const timeline = String(data.get("timeline") || "");
+    const details = String(data.get("details") || "");
+
+    try {
+      await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, phone, location, projectType, timeline, details }),
+      });
+    } catch {
+      // Saving the lead is a bonus; the email draft below is the reliable path.
+    }
+
+    const subject = `Estimate request — ${projectType || "Finish carpentry"}`;
     const body = [
-      `Name: ${data.get("name") || ""}`,
-      `Phone: ${data.get("phone") || ""}`,
-      `Project location: ${data.get("location") || ""}`,
-      `Project type: ${data.get("projectType") || ""}`,
-      `Desired timeline: ${data.get("timeline") || ""}`,
+      `Name: ${name}`,
+      `Phone: ${phone}`,
+      `Project location: ${location}`,
+      `Project type: ${projectType}`,
+      `Desired timeline: ${timeline}`,
       "",
       "Project details:",
-      `${data.get("details") || ""}`,
+      details,
     ].join("\n");
 
     window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
