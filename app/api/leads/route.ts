@@ -1,6 +1,6 @@
 import { getDb } from "../../../db";
 import { leads } from "../../../db/schema";
-import { sendLeadTexts } from "../../../lib/notify";
+import { sendLeadEmails } from "../../../lib/notify";
 
 function toRouteErrorMessage(error: unknown) {
   const message = error instanceof Error ? error.message : "Unexpected error";
@@ -43,9 +43,7 @@ export async function POST(request: Request) {
       .values({ name, phone, location, projectType, timeline, details })
       .returning();
 
-    await sendLeadTexts(
-      `New Jason & Co. lead: ${name} (${phone}) - ${projectType} in ${location}.`
-    );
+    await sendLeadEmails({ name, phone, location, projectType, timeline, details });
 
     return Response.json({ lead }, { status: 201 });
   } catch (error) {
