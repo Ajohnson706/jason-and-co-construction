@@ -1,4 +1,3 @@
-import { desc } from "drizzle-orm";
 import { getDb } from "../../../db";
 import { leads } from "../../../db/schema";
 import { sendLeadTexts } from "../../../lib/notify";
@@ -14,24 +13,6 @@ function toRouteErrorMessage(error: unknown) {
   }
 
   return message;
-}
-
-export async function GET() {
-  try {
-    const db = getDb();
-    const rows = await db
-      .select()
-      .from(leads)
-      .orderBy(desc(leads.createdAt), desc(leads.id))
-      .limit(50);
-
-    return Response.json({ leads: rows });
-  } catch (error) {
-    return Response.json(
-      { error: toRouteErrorMessage(error) },
-      { status: 500 }
-    );
-  }
 }
 
 export async function POST(request: Request) {

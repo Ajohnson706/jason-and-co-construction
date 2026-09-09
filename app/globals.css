@@ -128,6 +128,10 @@ button { font:inherit; }
 .estimate-form input:focus,.estimate-form select:focus,.estimate-form textarea:focus { border-color:var(--gold); box-shadow:0 0 0 1px var(--gold); }
 .estimate-submit { background:var(--gold); border:0; color:var(--ink); cursor:pointer; gap:15px; margin-top:26px; }
 .form-note { color:rgba(255,255,255,.48); font-size:11px; line-height:1.5; margin:17px 0 0; }
+.estimate-submit:disabled { cursor:wait; opacity:.68; }
+.form-status { font-size:13px; line-height:1.55; margin:17px 0 0; }
+.form-status-success { color:#d9bf98; }
+.form-status-error { color:#f4b4a9; }
 
 .contact { background:rgba(201,149,80,.91); backdrop-filter:blur(2px); display:grid; gap:8vw; grid-template-columns:1fr 1fr; padding:120px 8vw; }
 .contact>div>p:last-child { font-size:16px; line-height:1.7; max-width:520px; }

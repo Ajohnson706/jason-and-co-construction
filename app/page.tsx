@@ -162,6 +162,7 @@ export default function Home() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [galleryIndex, setGalleryIndex] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [estimateStatus, setEstimateStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
   useEffect(() => {
     if (!selectedProject) return;
@@ -184,6 +185,7 @@ export default function Home() {
 
   const handleEstimateSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setEstimateStatus("submitting");
     const data = new FormData(event.currentTarget);
     const name = String(data.get("name") || "");
     const phone = String(data.get("phone") || "");
@@ -193,28 +195,18 @@ export default function Home() {
     const details = String(data.get("details") || "");
 
     try {
-      await fetch("/api/leads", {
+      const response = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, phone, location, projectType, timeline, details }),
       });
+
+      if (!response.ok) throw new Error("Lead submission failed");
+      event.currentTarget.reset();
+      setEstimateStatus("success");
     } catch {
-      // Saving the lead is a bonus; the email draft below is the reliable path.
+      setEstimateStatus("error");
     }
-
-    const subject = `Estimate request — ${projectType || "Finish carpentry"}`;
-    const body = [
-      `Name: ${name}`,
-      `Phone: ${phone}`,
-      `Project location: ${location}`,
-      `Project type: ${projectType}`,
-      `Desired timeline: ${timeline}`,
-      "",
-      "Project details:",
-      details,
-    ].join("\n");
-
-    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   };
 
   return (
@@ -378,8 +370,16 @@ export default function Home() {
             <label><span>Desired timeline</span><select name="timeline" defaultValue=""><option value="">Not sure yet</option><option>As soon as possible</option><option>Within 1–3 months</option><option>Within 3–6 months</option><option>More than 6 months out</option></select></label>
             <label className="form-wide"><span>Project details</span><textarea name="details" rows={5} placeholder="Describe the rooms, trim package, plans, or custom work." required /></label>
           </div>
-          <button className="button estimate-submit" type="submit">Start your project request <span aria-hidden="true">↗</span></button>
-          <p className="form-note">This opens your email app with the project details filled in. You can attach photos or plans before sending.</p>
+          <button className="button estimate-submit" type="submit" disabled={estimateStatus === "submitting"}>
+            {estimateStatus === "submitting" ? "Sending your request…" : "Submit your project request"} <span aria-hidden="true">↗</span>
+          </button>
+          {estimateStatus === "success" && (
+            <p className="form-status form-status-success" role="status">Request received. Thank you — Jason &amp; Co. will follow up soon.</p>
+          )}
+          {estimateStatus === "error" && (
+            <p className="form-status form-status-error" role="alert">We couldn’t send that request. Please call or text (706) 434-9522 so we can help right away.</p>
+          )}
+          <p className="form-note">Your request is sent directly to Jason &amp; Co. You can include photos or plans when we follow up.</p>
         </form>
       </section>
 
