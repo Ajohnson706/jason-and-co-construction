@@ -29,6 +29,11 @@ const filters = ["All", "Before & After", "Trim & Details", "Cabinetry", "Floori
 const phoneDisplay = "(706) 434-9522";
 const phoneLink = "+17064349522";
 const email = "jasonandco.jason@gmail.com";
+const facebookUrl = "https://www.facebook.com/profile.php?id=61593028396432";
+
+function FacebookIcon() {
+  return <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M14.2 8.1V6.7c0-.7.5-.9 1-.9h1.3V3.1l-1.9-.1c-2.8 0-4.4 1.7-4.4 4.5v.6H8v3h2.2v9.8h3.4v-9.8h2.3l.4-3h-2.1Z" /></svg>;
+}
 
 function BeforeAfterSlider({ project }: { project: Project }) {
   const [position, setPosition] = useState(50);
@@ -391,6 +396,7 @@ export default function Home() {
           <div className="contact-actions">
             <a className="button contact-button" href={`tel:${phoneLink}`}>Call now</a>
             <a className="button contact-button contact-button-outline" href={`sms:${phoneLink}`}>Send a text</a>
+            <a className="button contact-button contact-button-outline facebook-button" href={facebookUrl} target="_blank" rel="noreferrer"><FacebookIcon /> Facebook</a>
           </div>
         </div>
         <div className="contact-details">
@@ -403,7 +409,7 @@ export default function Home() {
       <footer>
         <div className="brand footer-brand"><span className="brand-mark">J&amp;Co.</span><span className="brand-name">Jason &amp; Co. Construction</span></div>
         <p>Finish carpentry for Augusta and the CSRA.</p>
-        <p><a href={`tel:${phoneLink}`}>{phoneDisplay}</a> · <a href={`mailto:${email}`}>Email Jason</a></p>
+        <p><a href={`tel:${phoneLink}`}>{phoneDisplay}</a> · <a href={`mailto:${email}`}>Email Jason</a><br /><a className="footer-facebook" href={facebookUrl} target="_blank" rel="noreferrer"><FacebookIcon /> Facebook</a></p>
       </footer>
 
       <nav className="floating-contact" aria-label="Quick contact">
