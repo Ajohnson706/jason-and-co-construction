@@ -168,6 +168,14 @@ export default function Home() {
   const [galleryIndex, setGalleryIndex] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
   const [estimateStatus, setEstimateStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setShowBackToTop(window.scrollY > 650);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (!selectedProject) return;
@@ -417,6 +425,7 @@ export default function Home() {
         <a href={`sms:${phoneLink}`}><span aria-hidden="true">✦</span> Text</a>
         <a className="floating-estimate" href="#estimate">Request estimate</a>
       </nav>
+      {showBackToTop && <button className="back-to-top" type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Back to top"><span className="back-to-top-arrow" aria-hidden="true">↑</span><span className="back-to-top-mark">J&amp;Co.</span></button>}
 
       {selectedProject && (
         <div className="lightbox" role="dialog" aria-modal="true" aria-label={selectedProject.title} onClick={() => setSelectedProject(null)}>
